@@ -8,6 +8,13 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0.0"
+        
+        // Add this block for CMake
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
     }
     buildTypes {
         release {
@@ -15,20 +22,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-	sourceSets {
+    sourceSets {
         main.jni.srcDirs = []
         main.jniLibs.srcDirs = ['src/main/libs']
     }
 
+    // Replace ndkBuild block with cmake block
     externalNativeBuild {
-        ndkBuild {
-            path 'src/main/jni/Android.mk'
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.10.2"
         }
     }
 }
 
 dependencies {
-	implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:design:27.1.1'

@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
 		TextView tx = findViewById(R.id.mainTextView);
 		tx.setText( stringFromJNI() );
 		double circleArea = cCircle(5.0); // Replace 5.0 with the desired radius
-        double rectangleArea = cRectangle(4.0, 3.0); // Replace 4.0 and 3.0 with the desired length and width
+        double rectangleArea = cRectangle(200.0, 300.0); // Replace 4.0 and 3.0 with the desired length and width
 
         // Display the calculated areas
         tx.append("\nArea of Circle: " + circleArea);

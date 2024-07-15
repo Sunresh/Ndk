@@ -1,0 +1,35 @@
+
+cmake_minimum_required(VERSION 3.10)
+
+project(mystery)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Define the library
+add_library(mystery SHARED
+    mystery.cpp
+)
+
+# Set C++ file extensions
+set_target_properties(mystery PROPERTIES
+    SUFFIX ".so"
+    PREFIX "lib"
+)
+
+# Platform-specific flags
+if(ANDROID_ABI STREQUAL "x86")
+    target_compile_options(mystery PRIVATE
+        -ffast-math
+        -mtune=atom
+        -mssse3
+        -mfpmath=sse
+    )
+endif()
+
+# Include directories (if needed)
+# target_include_directories(mystery PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Link libraries (if needed)
+# target_link_libraries(mystery PRIVATE some_library)
