@@ -2,46 +2,26 @@
 #include <jni.h>
 #include "camera.cpp"
 
-extern "C" {
+#define JAVA_CLASS com_mycompany_myapp_MainActivity
 
-// Shorter function names
-jstring stringFromJNI(JNIEnv* env, jobject thiz) {
-    return env->NewStringUTF("Hello from JNI !");
-}
+#define JAVA_FUNC(func_name) Java_##JAVA_CLASS##_##func_name
 
-jdouble cCircle(JNIEnv* env, jobject thiz, jdouble radius) {
-    const double pi = 3.14159;
-    return pi * radius * radius;
-}
-
-jdouble cRectangle(JNIEnv* env, jobject thiz, jdouble length, jdouble width) {
-    return length * width;
-}
-
-// Array of native methods to be registered
-static JNINativeMethod methods[] = {
-    {"stringFromJNI", "()Ljava/lang/String;", (void*)stringFromJNI},
-    {"cCircle", "(D)D", (void*)cCircle},
-    {"cRectangle", "(DD)D", (void*)cRectangle}
-};
-
-// JNI_OnLoad function to register the native methods
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
-    JNIEnv* env;
-    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
-        return -1;
+extern "C"
+{
+    JNIEXPORT jstring JNICALL JAVA_FUNC(stringFromJNI)(JNIEnv* env, jobject thiz)
+    {
+        return env->NewStringUTF("Hello from JNI !");
     }
 
-    jclass clazz = env->FindClass("com/mycompany/myapp/MainActivity");
-    if (clazz == nullptr) {
-        return -1;
+    JNIEXPORT jdouble JNICALL JAVA_FUNC(cCircle)(JNIEnv* env, jobject thiz, jdouble radius)
+    {
+        const double pi = 3.14159;
+        return pi * radius * radius;
     }
 
-    if (env->RegisterNatives(clazz, methods, sizeof(methods) / sizeof(methods[0])) < 0) {
-        return -1;
+    // Function to calculate the area of a rectangle
+    JNIEXPORT jdouble JNICALL JAVA_FUNC(cRectangle)(JNIEnv* env, jobject thiz, jdouble length, jdouble width)
+    {
+        return 0.5 * length * width;
     }
-
-    return JNI_VERSION_1_6;
 }
-
-} // extern "C"
