@@ -1,28 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:ignore="MissingClass">
+    android:background="#1a1a2e">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
+        <!-- Title Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hybrid 3D Engine"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#e94560"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OpenCV + OpenGL ES"
+            android:textSize="14sp"
+            android:textColor="#88ffffff"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Info Text View -->
         <TextView
             android:id="@+id/mainTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Loading..."
-            android:textSize="18sp"
-            android:lineSpacingExtra="4dp"
-            android:fontFamily="monospace" />
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:padding="12dp"
+            android:background="#16213e"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"/>
 
-    </ScrollView>
+        <!-- OpenGL SurfaceView -->
+        <android.opengl.GLSurfaceView
+            android:id="@+id/glSurfaceView"
+            android:layout_width="500dp"
+            android:layout_height="500dp"
+            android:visibility="visible"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- ImageView for OpenCV fallback (hidden when OpenGL is active) -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="500dp"
+            android:layout_height="500dp"
+            android:scaleType="fitCenter"
+            android:background="#0f3460"
+            android:padding="8dp"
+            android:visibility="gone"/>
+
+        <!-- Control Buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/toggleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Switch to OpenGL"
+                android:textSize="14sp"
+                android:padding="12dp"
+                android:backgroundTint="#e94560"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/animationToggleBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Animation"
+                android:textSize="14sp"
+                android:padding="12dp"
+                android:backgroundTint="#0f3460"/>
+
+            <Button
+                android:id="@+id/resetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset"
+                android:textSize="14sp"
+                android:padding="12dp"
+                android:backgroundTint="#16213e"
+                android:layout_marginStart="8dp"/>
+
+        </LinearLayout>
+
+        <!-- Stats Section -->
+        <TextView
+            android:id="@+id/statsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stats: Ready"
+            android:textColor="#88ffffff"
+            android:textSize="11sp"
+            android:fontFamily="monospace"
+            android:padding="8dp"
+            android:background="#16213e"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Controls Info -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎮 Controls: Toggle between OpenGL (GPU) and OpenCV (CPU)"
+            android:textColor="#666666"
+            android:textSize="10sp"
+            android:padding="8dp"
+            android:gravity="center"/>
+
+    </LinearLayout>
+</ScrollView>

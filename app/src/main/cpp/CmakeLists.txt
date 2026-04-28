@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22.1)
-
 project(mystery)
+
+set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/opencv/sdk/native/jni)
+find_package(OpenCV REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -50,14 +52,44 @@ elseif(ANDROID_ABI STREQUAL "arm64-v8a")
     )
 endif()
 
+# Find required libraries
+find_library(jnigraphics-lib jnigraphics)
 find_library(log-lib log)
 find_library(android-lib android)
 
+# Find OpenGL/EGL libraries (FIXED)
+find_library(EGL-lib EGL)
+find_library(GLESv2-lib GLESv2)
+find_library(GLESv3-lib GLESv3)
+
+# Check if OpenGL libraries were found
+if(NOT EGL-lib)
+    message(WARNING "EGL library not found, OpenGL support will be disabled")
+    set(EGL-lib "")
+endif()
+
+if(NOT GLESv2-lib)
+    message(WARNING "GLESv2 library not found, OpenGL support will be disabled")
+    set(GLESv2-lib "")
+endif()
+
+# Link all libraries
 target_link_libraries(mystery
+    ${OpenCV_LIBS}
     ${log-lib}
     ${android-lib}
+    ${jnigraphics-lib}
+    ${EGL-lib}
+    ${GLESv2-lib}
+    ${GLESv3-lib}
 )
 
 target_compile_definitions(mystery PRIVATE
     MYSTERY_VERSION=1
+)
+
+# Add OpenGL includes (optional but good practice)
+target_include_directories(mystery PRIVATE
+    ${OpenCV_INCLUDE_DIRS}
+    # Android native includes are automatically included by NDK
 )

@@ -2,3 +2,4 @@
 /.gradle/8.10.2
 /app/.cxx
 /.gradle/buildOutputCleanup
+/app/src/main/cpp/opencv/sdk
