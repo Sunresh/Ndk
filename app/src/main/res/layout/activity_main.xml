@@ -12,26 +12,6 @@
         android:padding="16dp"
         android:gravity="center_horizontal">
 
-        <!-- Title Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hybrid 3D Engine"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#e94560"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OpenCV + OpenGL ES"
-            android:textSize="14sp"
-            android:textColor="#88ffffff"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Info Text View -->
         <TextView
             android:id="@+id/mainTextView"
             android:layout_width="match_parent"
@@ -114,16 +94,6 @@
             android:background="#16213e"
             android:gravity="center"
             android:layout_marginBottom="8dp"/>
-
-        <!-- Controls Info -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🎮 Controls: Toggle between OpenGL (GPU) and OpenCV (CPU)"
-            android:textColor="#666666"
-            android:textSize="10sp"
-            android:padding="8dp"
-            android:gravity="center"/>
 
     </LinearLayout>
 </ScrollView>
