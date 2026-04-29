@@ -1,0 +1,151 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  MainActivity.kt  –  Full NDK Architecture for 2-D Board / Card Games
+ *  Package : com.mycompany.myapp
+ *
+ *  Supports  : Ludo · Carrom · Card games · Chess · Checkers …
+ *
+ *  ┌─────────────────────────────────────────────────────────────────────┐
+ *  │  LAYER MAP                                                          │
+ *  │                                                                     │
+ *  │  Kotlin (UI thread)                                                 │
+ *  │   ├─ HUD / Overlay  (TextView, Button, Dialog)                      │
+ *  │   ├─ Input Bridge   (Touch → GestureDetector → NDC → NDK)          │
+ *  │   ├─ JNI Callbacks  (NDK → Kotlin via @JvmStatic / native thread)  │
+ *  │   └─ Lifecycle Gate (pause / resume / destroy)                      │
+ *  │                                                                     │
+ *  │  GL Thread (GLSurfaceView)                                          │
+ *  │   ├─ Renderer  (surfaceCreated / surfaceChanged / drawFrame)        │
+ *  │   └─ Event Queue  (queueEvent dispatches touch, dice, …)            │
+ *  │                                                                     │
+ *  │  NDK  (libmystery.so)                                               │
+ *  │   ├─ Game logic + physics                                           │
+ *  │   ├─ OpenGL ES 2 rendering                                          │
+ *  │   └─ Calls back to Kotlin via JNI FindClass / CallVoidMethod        │
+ *  └─────────────────────────────────────────────────────────────────────┘
+ *
+ *  NDK ↔ JNI naming convention
+ *      Kotlin fun   nativeFoo()
+ *      C++ symbol   Java_com_mycompany_myapp_MainActivity_nativeFoo()
+ *
+ *  NDK → Kotlin callbacks (called from C++ on the GL thread)
+ *      GameBridge.onScoreChanged(player, score)
+ *      GameBridge.onTurnChanged(playerIndex)
+ *      GameBridge.onGameEvent(eventCode, payload)
+ *      GameBridge.onPlaySound(soundId)
+ *      GameBridge.onShowDialog(type, message)
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+
+ <?xml version="1.0" encoding="utf-8"?>
+  <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+ 
+      <!-- Full-screen GL canvas -->
+      <android.opengl.GLSurfaceView
+          android:id="@+id/glSurfaceView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent" />
+ 
+      <!-- HUD overlay (transparent, touch-passthrough for non-button areas) -->
+      <FrameLayout
+          android:id="@+id/hudOverlay"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@android:color/transparent">
+ 
+          <TextView android:id="@+id/tvScore"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top|center_horizontal"
+              android:padding="8dp" android:textColor="#FFF"
+              android:text="P1:0  P2:0" />
+ 
+          <TextView android:id="@+id/tvTurn"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top|start"
+              android:padding="8dp" android:textColor="#FFD700"
+              android:text="Player 1's turn" />
+ 
+          <TextView android:id="@+id/tvFps"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top|end"
+              android:padding="8dp" android:textColor="#0F0"
+              android:text="FPS: --" />
+ 
+          <Button android:id="@+id/btnAction"
+              android:layout_width="120dp"
+              android:layout_height="48dp"
+              android:layout_gravity="bottom|center_horizontal"
+              android:layout_marginBottom="24dp"
+              android:text="Roll Dice" />
+      </FrameLayout>
+ 
+  </FrameLayout>
+ *
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  C++  JNI stub template  jni/game_jni.cpp  (fill in game logic)
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+  #include <jni.h>
+  #include "game_engine.h"   // your engine header
+ 
+  #define PKG "com/mycompany/myapp/MainActivity"
+  #define JFUN(name) JNIEXPORT void JNICALL Java_##PKG##_##name
+ 
+  extern "C" {
+ 
+  JFUN(nativeSurfaceCreated)(JNIEnv*, jobject)   { Engine::init(); }
+  JFUN(nativeSurfaceChanged)(JNIEnv*, jobject,
+                              jint w, jint h)     { Engine::resize(w, h); }
+  JFUN(nativeDrawFrame)     (JNIEnv*, jobject)   { Engine::tick(); Engine::draw(); }
+  JFUN(nativePause)         (JNIEnv*, jobject)   { Engine::pause(); }
+  JFUN(nativeResume)        (JNIEnv*, jobject)   { Engine::resume(); }
+  JFUN(nativeCleanup)       (JNIEnv*, jobject)   { Engine::shutdown(); }
+ 
+  JFUN(nativeTouchDown)(JNIEnv*, jobject,
+                         jfloat x, jfloat y)     { Engine::touchDown(x, y); }
+  JFUN(nativeTouchMove)(JNIEnv*, jobject,
+                         jfloat x, jfloat y)     { Engine::touchMove(x, y); }
+  JFUN(nativeTouchUp)  (JNIEnv*, jobject,
+                         jfloat x, jfloat y)     { Engine::touchUp(x, y); }
+ 
+  JFUN(nativePointerDown)(JNIEnv*, jobject,
+                           jint id, jfloat x, jfloat y) {
+      Engine::pointerDown(id, x, y);
+  }
+  JFUN(nativePointerUp)  (JNIEnv*, jobject,
+                           jint id, jfloat x, jfloat y) {
+      Engine::pointerUp(id, x, y);
+  }
+ 
+  JFUN(nativeDoubleTap) (JNIEnv*, jobject,
+                          jfloat x, jfloat y)    { Engine::doubleTap(x, y); }
+  JFUN(nativeLongPress) (JNIEnv*, jobject,
+                          jfloat x, jfloat y)    { Engine::longPress(x, y); }
+  JFUN(nativeFling)     (JNIEnv*, jobject,
+                          jfloat vx, jfloat vy)  { Engine::fling(vx, vy); }
+ 
+  JFUN(nativeActionButton) (JNIEnv*, jobject)    { Engine::actionButton(); }
+  JFUN(nativeDialogResult) (JNIEnv*, jobject,
+                             jint r)              { Engine::dialogResult(r); }
+  JFUN(nativeRestartGame)  (JNIEnv*, jobject)    { Engine::restart(); }
+  JFUN(nativeSendCommand)  (JNIEnv*, jobject,
+                             jint cmd, jint p)    { Engine::command(cmd, p); }
+ 
+  } // extern "C"
+ *
+ * // ── Calling back into Kotlin from C++ ──────────────────────────────────
+ * // Call from anywhere in the GL thread:
+ * //
+ * // void notifyScore(JNIEnv* env, int player, int score) {
+ * //     jclass   cls = env->FindClass("com/mycompany/myapp/GameBridge");
+ * //     jmethodID m  = env->GetStaticMethodID(cls,"onScoreChanged","(II)V");
+ * //     env->CallStaticVoidMethod(cls, m, player, score);
+ * // }
+ * ═══════════════════════════════════════════════════════════════════════════
+ */

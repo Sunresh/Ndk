@@ -1,99 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#1a1a2e">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/mainTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Loading..."
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:fontFamily="monospace"
-            android:padding="12dp"
-            android:background="#16213e"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"/>
-
-        <!-- OpenGL SurfaceView -->
-        <android.opengl.GLSurfaceView
-            android:id="@+id/glSurfaceView"
-            android:layout_width="500dp"
-            android:layout_height="500dp"
-            android:visibility="visible"/>
-
-        <!-- ImageView for OpenCV fallback (hidden when OpenGL is active) -->
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="500dp"
-            android:layout_height="500dp"
-            android:scaleType="fitCenter"
-            android:background="#0f3460"
-            android:padding="8dp"
-            android:visibility="gone"/>
-
-        <!-- Control Buttons -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp">
-
-            <Button
-                android:id="@+id/toggleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Switch to OpenGL"
-                android:textSize="14sp"
-                android:padding="12dp"
-                android:backgroundTint="#e94560"
-                android:layout_marginEnd="8dp"/>
-
-            <Button
-                android:id="@+id/animationToggleBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start Animation"
-                android:textSize="14sp"
-                android:padding="12dp"
-                android:backgroundTint="#0f3460"/>
-
-            <Button
-                android:id="@+id/resetButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reset"
-                android:textSize="14sp"
-                android:padding="12dp"
-                android:backgroundTint="#16213e"
-                android:layout_marginStart="8dp"/>
-
-        </LinearLayout>
-
-        <!-- Stats Section -->
-        <TextView
-            android:id="@+id/statsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Stats: Ready"
-            android:textColor="#88ffffff"
-            android:textSize="11sp"
-            android:fontFamily="monospace"
-            android:padding="8dp"
-            android:background="#16213e"
-            android:gravity="center"
-            android:layout_marginBottom="8dp"/>
-
-    </LinearLayout>
-</ScrollView>
+  <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+ 
+      <!-- Full-screen GL canvas -->
+      <android.opengl.GLSurfaceView
+          android:id="@+id/glSurfaceView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent" />
+ 
+      <!-- HUD overlay (transparent, touch-passthrough for non-button areas) -->
+      <FrameLayout
+          android:id="@+id/hudOverlay"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@android:color/transparent">
+ 
+          <TextView android:id="@+id/tvScore"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top|center_horizontal"
+              android:padding="8dp" android:textColor="#FFF"
+              android:text="P1:0  P2:0" />
+ 
+          <TextView android:id="@+id/tvTurn"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top|start"
+              android:padding="8dp" android:textColor="#FFD700"
+              android:text="Player 1's turn" />
+ 
+          <TextView android:id="@+id/tvFps"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top|end"
+              android:padding="8dp" android:textColor="#0F0"
+              android:text="FPS: --" />
+ 
+          <Button android:id="@+id/btnAction"
+              android:layout_width="120dp"
+              android:layout_height="48dp"
+              android:layout_gravity="bottom|center_horizontal"
+              android:layout_marginBottom="24dp"
+              android:text="Roll Dice" />
+      </FrameLayout>
+ 
+  </FrameLayout>
